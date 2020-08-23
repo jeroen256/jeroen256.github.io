@@ -1,0 +1,120 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, user-scalable=no">
+    <meta name="HandheldFriendly" content="true">
+
+    <title>Test</title>
+    <meta name="description"
+        content="The smash hit Curve Fever is back with a new multiplayer browser game: Curve Fever Pro. Cut off opponents, squeeze through tiny holes and unlock new powers.">
+    <meta name="keywords"
+        content="curve fever, curve fever pro, browser game, io game, snake, multiplayer, free game, free browser game, online game, play with friends, fun game, achtung die kurve">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="logo-512x512.png">
+
+
+<script>
+console.log('hoi');
+
+// source: https://w3c.github.io/web-nfc/ Example 5
+async function f1() {
+    const reader = new NDEFReader();
+    await reader.scan();
+    reader.onreading = event => {
+        const message = event.message;
+
+        if (message.records.length == 0 ||     // unformatted tag
+            message.records[0].recordType == 'empty' ) {  // empty record
+        const writer = new NDEFWriter();
+        writer.write({
+            records: [{ recordType: "text", data: 'Hello World' }]
+        });
+        return;
+        }
+
+        const decoder = new TextDecoder();
+        for (const record of message.records) {
+        switch (record.recordType) {
+            case "text":
+            const textDecoder = new TextDecoder(record.encoding);
+            console.log(`Text: ${textDecoder.decode(record.data)} (${record.lang})`);
+            break;
+            case "url":
+            console.log(`URL: ${decoder.decode(record.data)}`);
+            break;
+            case "mime":
+            if (record.mediaType === "application/json") {
+                console.log(`JSON: ${JSON.parse(decoder.decode(record.data))}`);
+            }
+            else if (record.mediaType.startsWith('image/')) {
+                const blob = new Blob([record.data], { type: record.mediaType });
+
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(blob);
+                img.onload = () => window.URL.revokeObjectURL(this.src);
+
+                document.body.appendChild(img);
+            }
+            else {
+                console.log(`Media not handled`);
+            }
+            break;
+            default:
+            console.log(`Record not handled`);
+        }
+        }
+    };
+}
+
+// Source https://googlechrome.github.io/samples/web-nfc/
+scanButton.addEventListener("click", async () => {
+  log("User clicked scan button");
+
+  try {
+    const reader = new NDEFReader();
+    await reader.scan();
+    log("> Scan started");
+
+    reader.addEventListener("error", (event) => {
+      log(`Argh! ${event.message}`);
+    });
+
+    reader.addEventListener("reading", ({ message, serialNumber }) => {
+      log(`> Serial Number: ${serialNumber}`);
+      log(`> Records: (${message.records.length})`);
+    });
+  } catch (error) {
+    log("Argh! " + error);
+  }
+});
+
+writeButton.addEventListener("click", async () => {
+  log("User clicked write button");
+
+  try {
+    const writer = new NDEFWriter();
+    await writer.write("Hello world!");
+    log("> Message written");
+  } catch (error) {
+    log("Argh! " + error);
+  }
+});
+</script>
+
+</head>
+
+<body style="background: linear-gradient(to right, #ff0000 0%, #ffffff 100%);">NFC
+<p>https://w3c.github.io/web-nfc/<br>
+<button onclick="f1()">Example 5</button></p>
+<button id="scanButton">scanButton</button>
+<button id="writeButton">writeButton</button>
+<p>https://stackoverflow.com/questions/21925992/chrome-devtools-devices-does-not-detect-device-when-plugged-in</p>
+</body></html>
