@@ -74,44 +74,46 @@ async function f1() {
     };
 }
 
-// Source https://googlechrome.github.io/samples/web-nfc/
-scanButton.addEventListener("click", async () => {
-  log("User clicked scan button");
+// // Source https://googlechrome.github.io/samples/web-nfc/
+// scanButton.addEventListener("click", async () => {
+//   log("User clicked scan button");
 
-  try {
-    const reader = new NDEFReader();
-    await reader.scan();
-    log("> Scan started");
+//   try {
+//     const reader = new NDEFReader();
+//     await reader.scan();
+//     log("> Scan started");
 
-    reader.addEventListener("error", (event) => {
-      log(`Argh! ${event.message}`);
-    });
+//     reader.addEventListener("error", (event) => {
+//       log(`Argh! ${event.message}`);
+//     });
 
-    reader.addEventListener("reading", ({ message, serialNumber }) => {
-      log(`> Serial Number: ${serialNumber}`);
-      log(`> Records: (${message.records.length})`);
-    });
-  } catch (error) {
-    log("Argh! " + error);
-  }
-});
+//     reader.addEventListener("reading", ({ message, serialNumber }) => {
+//       log(`> Serial Number: ${serialNumber}`);
+//       log(`> Records: (${message.records.length})`);
+//     });
+//   } catch (error) {
+//     log("Argh! " + error);
+//   }
+// });
 
-writeButton.addEventListener("click", async () => {
-  log("User clicked write button");
+// writeButton.addEventListener("click", async () => {
+//   log("User clicked write button");
 
-  try {
-    const writer = new NDEFWriter();
-    await writer.write("Hello world!");
-    log("> Message written");
-  } catch (error) {
-    log("Argh! " + error);
-  }
-});
+//   try {
+//     const writer = new NDEFWriter();
+//     await writer.write("Hello world!");
+//     log("> Message written");
+//   } catch (error) {
+//     log("Argh! " + error);
+//   }
+// });
 </script>
 
 </head>
 
-<body style="background: linear-gradient(to right, #ff0000 0%, #ffffff 100%);">NFC
+<body style="background: linear-gradient(to right, #ff0000 0%, #ffffff 100%);">
+<p>17:57</p>
+  NFC
 <p>https://w3c.github.io/web-nfc/<br>
 <button onclick="f1()">Example 5</button></p>
 <button id="scanButton">scanButton</button>
