@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Sync Text Bridge</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background: #121212;
+            color: #e0e0e0;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #1e1e1e;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            resize: vertical;
+        }
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover { background: #0062a3; }
+        .output-box {
+            background: #1e1e1e;
+            border-left: 4px solid #007acc;
+            padding: 15px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border-radius: 0 8px 8px 0;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>FF Sync Text Bridge</h2>
+
+    <div id="incomingSection" class="hidden">
+        <p style="color: #888; margin-bottom: 5px;">Received Text:</p>
+        <div id="output" class="output-box"></div>
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        <hr style="border: 0; border-top: 1px solid #333; margin: 2rem 0;">
+    </div>
+
+    <div>
+        <p style="color: #888; margin-bottom: 5px;">Send New Text:</p>
+        <textarea id="textInput" placeholder="Type or paste text here..."></textarea>
+        <button onclick="generateUrl()">1. Update URL</button>
+        <p style="font-size: 0.85rem; color: #aaa; margin-top: 8px;">
+            <em>After clicking update, use Firefox <strong>"Send Tab to Device"</strong> to push this page to your PC.</em>
+        </p>
+    </div>
+
+    <script>
+        // On Load: Check if there is text in the query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedText = urlParams.get('text');
+
+        if (encodedText) {
+            const decodedText = decodeURIComponent(encodedText);
+            document.getElementById('output').textContent = decodedText;
+            document.getElementById('incomingSection').classList.remove('hidden');
+            // Pre-fill the textarea just in case you want to edit/re-send
+            document.getElementById('textInput').value = decodedText;
+        }
+
+        // Encode the text into the browser URL without refreshing
+        function generateUrl() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) return;
+            
+            const newUrl = window.location.origin + window.location.pathname + '?text=' + encodeURIComponent(text);
+            window.history.pushState({ path: newUrl }, '', newUrl);
+        }
+
+        // Quick utility to copy received text
+        function copyToClipboard() {
+            const text = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
