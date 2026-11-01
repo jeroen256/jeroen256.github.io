@@ -3,20 +3,24 @@
 // Test page for password generator using Playwright or puppeteer
 // Run with: node test-password-generator.js PORT (default: 8000)
 
-const { chromium, firefox } = require('@playwright/test');
+const { chromium } = require('@playwright/test');
 
 async function runTests(port = 8000) {
-    const browser = await chromium.launch({
-        headless: true,
-        slowMo: false,
-    });
-
-    console.log('🧪 Starting Password Generator tests...\n');
-
+    const browser = await chromium.launch();
     const page = await browser.newPage();
-    const portArg = typeof port === 'string' ? parseInt(port) : 8000;
     
     try {
+        await page.goto(`http://127.0.0.1:${port}/generate-password.html`);
+        
+        console.log('Checking elements...');
+        
+        // Check required elements
+        if (!document.getElementById('length')) {
+            console.log('❌ Missing length input - test would fail');
+        } else {
+            console.log('✅ Length slider found');
+        }
+
         await page.waitForLoadState('networkidle', { timeout: 5000 });
 
         // Test 1: Load the page and check basic elements

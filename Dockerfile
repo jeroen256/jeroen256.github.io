@@ -7,6 +7,7 @@
 # npx http-server -p 8000
 # docker exec -it cb41a977d237 bash
 # node test-password-generator.js 8000
+# node simple-test.js 8000 
 FROM node:20-slim
 WORKDIR /workspace
 RUN apt-get update && apt-get install -y git curl
